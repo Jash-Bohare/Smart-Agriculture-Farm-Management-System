@@ -196,21 +196,21 @@ LEFT JOIN Fertilizer_Inventory fz ON fz.Recommended_Crop_ID = c.Crop_ID
 LEFT JOIN Pesticide_Inventory ps ON ps.Recommended_Crop_ID = c.Crop_ID;
 
 
--- 6. Crop disease tracking & alerts
+-- 5. Crop disease tracking & alerts
 
 SELECT Field_ID, Disease_Name, Severity, Date_Detected
 FROM Crop_Disease_Reports
 WHERE Severity = 'High';
 
 
--- 7. Real-time weather integration
+-- 6. Real-time weather integration
 
 SELECT Location, Date, Temperature, Rainfall, Humidity, Wind_Speed
 FROM Weather_Data
 ORDER BY Date DESC;
 
 
--- 8. Market price tracking
+-- 7. Market price tracking
 
 SELECT c.Crop_Name, m.Quantity, m.Price_Per_Unit, m.Sale_Date
 FROM Market_Prices m
@@ -218,14 +218,14 @@ JOIN Crops c ON m.Crop_ID = c.Crop_ID
 ORDER BY m.Sale_Date DESC;
 
 
--- 9. Farm worker task assignment & tracking
+-- 8. Farm worker task assignment & tracking
 
 SELECT w.Name, f.Farm_Name, w.Task_Assignment
 FROM Workers w
 JOIN Farms f ON w.Assigned_Farm_ID = f.Farm_ID;
 
 
--- 10. Analytics dashboard (basic summary)
+-- 9. Analytics dashboard (basic summary)
 
 SELECT 
     (SELECT COUNT(*) FROM Farmers) AS Total_Farmers,
@@ -234,7 +234,7 @@ SELECT
     (SELECT SUM(Quantity) FROM Harvest_Records) AS Total_Harvest;
 
 
--- 11. Export-ready reports (harvest + sales)
+-- 10. Export-ready reports (harvest + sales)
 
 SELECT h.Field_ID, c.Crop_Name, h.Quantity, h.Harvest_Date,
        m.Price_Per_Unit, (h.Quantity * m.Price_Per_Unit) AS Revenue
