@@ -162,3 +162,90 @@ CREATE TABLE Crop_Disease_Reports (
     Date_Detected DATE,
     FOREIGN KEY (Field_ID) REFERENCES Fields(Field_ID)
 );
+ 
+
+-- 1. Sensor-based soil moisture tracking
+
+SELECT Field_ID, Moisture_Level, Reading_Timestamp
+FROM Soil_Sensors
+ORDER BY Reading_Timestamp DESC;
+
+
+-- 2. Automated irrigation scheduling
+
+SELECT f.Field_ID, s.Moisture_Level, i.Status
+FROM Fields f
+JOIN Soil_Sensors s ON f.Field_ID = s.Field_ID
+JOIN Irrigation_Units i ON f.Irrigation_Unit_ID = i.Irrigation_Unit_ID
+WHERE s.Moisture_Level < 30 AND i.Status = 'OFF';
+
+
+-- 3. Predictive yield calculation
+
+SELECT f.Field_ID, c.Crop_Name,
+       (c.Expected_Yield_Per_Hectare * f.Area) AS Predicted_Yield
+FROM Fields f
+JOIN Crops c ON f.Crop_ID = c.Crop_ID;
+
+
+-- 4. Fertilizer/pesticide optimization
+
+SELECT c.Crop_Name, fz.Name AS Recommended_Fertilizer, ps.Name AS Recommended_Pesticide
+FROM Crops c
+LEFT JOIN Fertilizer_Inventory fz ON fz.Recommended_Crop_ID = c.Crop_ID
+LEFT JOIN Pesticide_Inventory ps ON ps.Recommended_Crop_ID = c.Crop_ID;
+
+
+-- 5. Equipment maintenance alerts
+
+SELECT Equipment_ID, Name, Last_Maintenance_Date
+FROM Equipment
+WHERE DATEDIFF(CURDATE(), Last_Maintenance_Date) > 90;
+
+
+-- 6. Crop disease tracking & alerts
+
+SELECT Field_ID, Disease_Name, Severity, Date_Detected
+FROM Crop_Disease_Reports
+WHERE Severity = 'High';
+
+
+-- 7. Real-time weather integration
+
+SELECT Location, Date, Temperature, Rainfall, Humidity, Wind_Speed
+FROM Weather_Data
+ORDER BY Date DESC;
+
+
+-- 8. Market price tracking
+
+SELECT c.Crop_Name, m.Quantity, m.Price_Per_Unit, m.Sale_Date
+FROM Market_Prices_Sales m
+JOIN Crops c ON m.Crop_ID = c.Crop_ID
+ORDER BY m.Sale_Date DESC;
+
+
+-- 9. Farm worker task assignment & tracking
+
+SELECT w.Name, f.Farm_Name, w.Task_Assignment
+FROM Workers w
+JOIN Farms f ON w.Assigned_Farm_ID = f.Farm_ID;
+
+
+-- 10. Analytics dashboard (basic summary)
+
+SELECT 
+    (SELECT COUNT(*) FROM Farmers) AS Total_Farmers,
+    (SELECT COUNT(*) FROM Farms) AS Total_Farms,
+    (SELECT COUNT(*) FROM Fields) AS Total_Fields,
+    (SELECT SUM(Quantity) FROM Harvest_Records) AS Total_Harvest;
+
+
+-- 11. Export-ready reports (harvest + sales)
+
+SELECT h.Field_ID, c.Crop_Name, h.Quantity, h.Harvest_Date,
+       m.Price_Per_Unit, (h.Quantity * m.Price_Per_Unit) AS Revenue
+FROM Harvest_Records h
+JOIN Crops c ON h.Crop_ID = c.Crop_ID
+LEFT JOIN Market_Prices_Sales m ON h.Crop_ID = m.Crop_ID
+ORDER BY h.Harvest_Date DESC;
