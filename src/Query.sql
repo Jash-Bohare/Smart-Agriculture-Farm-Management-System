@@ -1,5 +1,6 @@
 create database Smart_Agriculture_3;
 use Smart_Agriculture_3;
+drop database Smart_Agriculture_3;
 
 CREATE TABLE Farmers (
     Farmer_ID INT PRIMARY KEY,
@@ -105,7 +106,7 @@ CREATE TABLE Harvest_Records (
     FOREIGN KEY (Crop_ID) REFERENCES Crops(Crop_ID)
 );
 
-CREATE TABLE Market_Prices_Sales (
+CREATE TABLE Market_Prices (
     Sale_ID INT PRIMARY KEY,
     Crop_ID INT,
     Quantity FLOAT,
@@ -136,7 +137,7 @@ CREATE TABLE Maintenance_Logs (
     FOREIGN KEY (Equipment_ID) REFERENCES Equipment(Equipment_ID)
 );
 
-CREATE TABLE Alerts_Notifications (
+CREATE TABLE Alerts (
     Alert_ID INT PRIMARY KEY,
     Field_ID INT,
     Alert_Type VARCHAR(50),
@@ -145,7 +146,7 @@ CREATE TABLE Alerts_Notifications (
     FOREIGN KEY (Field_ID) REFERENCES Fields(Field_ID)
 );
 
-CREATE TABLE Farm_Expenses_Payments (
+CREATE TABLE Farm_Expenses (
     Expense_ID INT PRIMARY KEY,
     Farm_ID INT,
     Expense_Type VARCHAR(100),
@@ -162,7 +163,6 @@ CREATE TABLE Crop_Disease_Reports (
     Date_Detected DATE,
     FOREIGN KEY (Field_ID) REFERENCES Fields(Field_ID)
 );
- 
 
 -- 1. Sensor-based soil moisture tracking
 
@@ -196,13 +196,6 @@ LEFT JOIN Fertilizer_Inventory fz ON fz.Recommended_Crop_ID = c.Crop_ID
 LEFT JOIN Pesticide_Inventory ps ON ps.Recommended_Crop_ID = c.Crop_ID;
 
 
--- 5. Equipment maintenance alerts
-
-SELECT Equipment_ID, Name, Last_Maintenance_Date
-FROM Equipment
-WHERE DATEDIFF(CURDATE(), Last_Maintenance_Date) > 90;
-
-
 -- 6. Crop disease tracking & alerts
 
 SELECT Field_ID, Disease_Name, Severity, Date_Detected
@@ -220,7 +213,7 @@ ORDER BY Date DESC;
 -- 8. Market price tracking
 
 SELECT c.Crop_Name, m.Quantity, m.Price_Per_Unit, m.Sale_Date
-FROM Market_Prices_Sales m
+FROM Market_Prices m
 JOIN Crops c ON m.Crop_ID = c.Crop_ID
 ORDER BY m.Sale_Date DESC;
 
@@ -247,5 +240,56 @@ SELECT h.Field_ID, c.Crop_Name, h.Quantity, h.Harvest_Date,
        m.Price_Per_Unit, (h.Quantity * m.Price_Per_Unit) AS Revenue
 FROM Harvest_Records h
 JOIN Crops c ON h.Crop_ID = c.Crop_ID
-LEFT JOIN Market_Prices_Sales m ON h.Crop_ID = m.Crop_ID
+LEFT JOIN Market_Prices m ON h.Crop_ID = m.Crop_ID
 ORDER BY h.Harvest_Date DESC;
+
+-- 1. Farmers
+SELECT * FROM Farmers;
+
+-- 2. Farms
+SELECT * FROM Farms;
+
+-- 3. Fields
+SELECT * FROM Fields;
+
+-- 4. Crops
+SELECT * FROM Crops;
+
+-- 5. Workers
+SELECT * FROM Workers;
+
+-- 6. Irrigation_Units
+SELECT * FROM Irrigation_Units;
+
+-- 7. Soil_Sensors
+SELECT * FROM Soil_Sensors;
+
+-- 8. Fertilizer_Inventory
+SELECT * FROM Fertilizer_Inventory;
+
+-- 9. Pesticide_Inventory
+SELECT * FROM Pesticide_Inventory;
+
+-- 10. Equipment
+SELECT * FROM Equipment;
+
+-- 11. Harvest_Records
+SELECT * FROM Harvest_Records;
+
+-- 12. Market_Prices_Sales
+SELECT * FROM Market_Prices;
+
+-- 13. Weather_Data
+SELECT * FROM Weather_Data;
+
+-- 14. Maintenance_Logs
+SELECT * FROM Maintenance_Logs;
+
+-- 15. Alerts_Notifications
+SELECT * FROM Alerts;
+
+-- 16. Farm_Expenses_Payments
+SELECT * FROM Farm_Expenses;
+
+-- 17. Crop_Disease_Reports
+SELECT * FROM Crop_Disease_Reports;
